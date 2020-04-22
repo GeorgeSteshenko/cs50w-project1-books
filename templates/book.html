@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Book
+{% endblock %}
+
+{% block body %}
+    <div class="media">
+        <div class="media-body">
+            <h2 class="mt-0 mb-1">{{ book.title }}</h2>
+            <h5>ISBN: {{ book.isbn }}</h5>
+            <p>By {{ book.author }}, published in {{ book.year }}</p>
+            {% autoescape false %}
+            <p>{{ bookInfo.description }}</p>
+            {% endautoescape %}
+            <a href="{{ bookInfo.url }}" target="_blank" class="btn btn-outline-info">Read more &nbsp;<span class="fa fa-external-link"></span></a>
+        </div>
+        <img src="{{ bookInfo.image_url }}" class="ml-3" alt="{{ book.title }} by {{ book.author }}" title="{{ book.title }} by {{ book.author }}">
+    </div>
+
+    {% if session.username %}
+    <hr class="my-3">
+        {% if message %}
+        <div class="alert {{ alert_type }} alert-dismissible fade show" role="alert">
+            <strong>Holy guacamole!</strong> {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endif %}
+    <h5>Leave your review</h5>
+    <form method="POST">
+        <div class="form-group">
+            <label for="rating">Rate the book:</label>
+            <select class="custom-select col-1 ml-1" id="rating" name="rating">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5" selected>5</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="comment">Leave a commnet:</label>
+            <textarea class="form-control" id="commnet" name="comment" rows="3"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+    {% endif %}
+    
+    <hr class="my-3">
+    {% if reviews %}
+        <h5>Recent reviews</h5>
+        {% for review in reviews %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ review.username }} says:</h5>
+                <p class="card-text">{{ review.comment }}</p>
+                <p class="card-text"><small class="text-muted">Rated:</small>
+                    {% for i in range(review.rating) %}
+                        <span class="fa fa-star checked"></span>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        There is no reviews yet
+    {% endif %}
+    
+    <!-- styles for rating starts -->
+    <style>span.checked { color: orange; vertical-align: middle; }</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
