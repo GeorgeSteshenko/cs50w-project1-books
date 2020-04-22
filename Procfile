@@ -1,1 +1,1 @@
-web: gunicorn bookreviews-flask.wsgi --log-file -
+web: gunicorn bookreviews-flask.wsgi
