@@ -22,11 +22,20 @@ Session(app)
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
+# Show env var: echo %DATABASE_URL%
+# Heroku PostgreSQL DB
+# set DATABASE_URL=postgres://azwkhtrusnpsdt:dc1b9d68bb3c1305fb169f88b0b4f506652c7dfaaf75d33ba4b70c3bbb8eb8a2@ec2-52-203-160-194.compute-1.amazonaws.com:5432/dbjmq6dealsjek
+# Local PostgreSQL DB
+# set DATABASE_URL=postgresql://postgres:admin@localhost:5432/bookreviews
+# GoodReads KRY
+# set GOODREADS_KEY=0WaHHfUpZVDyPLEiSJZg
 db = scoped_session(sessionmaker(bind=engine))
+
 
 @app.route("/")
 def index():
     return render_template("index.html", message="Test")
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -126,7 +135,7 @@ def book(isbn):
                               }).fetchall()
 
     # Call for GoodReeds API endpoint to get all info about the book
-    goodReadsKey = os.getenv("KEY")
+    goodReadsKey = os.getenv("GOODREADS_KEY")
     goodReadsBookXMLInfo = requests.get(f"https://www.goodreads.com/book/isbn/{isbn}", params={"key": goodReadsKey}).text
     goodReadsResponse = xmltodict.parse(goodReadsBookXMLInfo)
     goodReadsResponse = goodReadsResponse["GoodreadsResponse"]["book"]
@@ -184,7 +193,7 @@ def book(isbn):
 @app.route("/api/book/<isbn>", methods=["GET"])
 def book_api(isbn):
     book = db.execute("SELECT * FROM books WHERE isbn =:isbn", {"isbn": isbn}).fetchone()
-    goodReadsKey = os.getenv("KEY")
+    goodReadsKey = os.getenv("GOODREADS_KEY")
 
     if book is None:
         return jsonify({"error": "Invalid ISBN number"}), 404
@@ -205,7 +214,7 @@ def book_api(isbn):
 
 @app.route("/api/book/gr-info/<isbn>", methods=["GET"])
 def book_api_grinfo(isbn):
-    goodReadsKey = os.getenv("KEY")
+    goodReadsKey = os.getenv("GOODREADS_KEY")
     goodReadsBookXMLInfo = requests.get(f"https://www.goodreads.com/book/isbn/{isbn}", params={"key": goodReadsKey}).text
     res = xmltodict.parse(goodReadsBookXMLInfo)
     res = res["GoodreadsResponse"]["book"]

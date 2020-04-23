@@ -1,1 +1,1 @@
-web: gunicorn bookreviews-flask.wsgi
+web: gunicorn application:app
