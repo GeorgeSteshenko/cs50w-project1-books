@@ -23,7 +23,7 @@ Web Programming with Python and JavaScript
 
 Create a virual environment
 
-`python3 -m venv venv`
+`python3 -m venv .venv`
 
 Install dependencies
 
